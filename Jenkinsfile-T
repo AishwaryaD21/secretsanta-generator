@@ -4,15 +4,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    checkout([$class: 'GitSCM', branches: [[name: 'master']], userRemoteConfigs: [[url: "https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"]]])
+                    checkout([$class: 'GitSCM', branches: [[name: 'master']], userRemoteConfigs: [[url: "https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"]])
                 }
             }
         }
         stage('Tag Generation') {
             steps {
                 script {
-                   
-
                     def lastTag = sh(script: 'git tag --list --sort=-version:refname | grep -E "^[0-9]+\\.[0-9]+\\.[0-9]+$" | head -n 1', returnStdout: true).trim()
 
                     if (lastTag) {
@@ -35,21 +33,16 @@ pipeline {
 
                         sh "git tag -am 'Tagging for release ${newTag}' ${newTag}"
                         withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                            sh "git push --tags https://${USERNAME}:${PASSWORD}@@github.com/AishwaryaD21/secretsanta-generator.git"
-build job: 'job2', parameters: [
-                        string(name: 'TAG_VERSION', value: "${newTag}")
-
-                            
+                            sh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"
+                            build job: 'job2', parameters: [string(name: 'TAG_VERSION', value: "${newTag}")]
                         }
                     } else {
                         def newTag = "1.0.0"
                         echo "Creating initial tag: ${newTag}"
 
                         sh "git tag -am 'Tagging for release ${newTag}' ${newTag}"
-                        withCredentials([usernamePassword(credentialsId: 'login-bitbucket', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                            sh "git push --tags https://${USERNAME}:${PASSWORD}@@github.com/AishwaryaD21/secretsanta-generator.git"
-
-                            
+                        withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                            sh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"
                         }
                     }
                 }
@@ -57,3 +50,4 @@ build job: 'job2', parameters: [
         }
     }
 }
+
