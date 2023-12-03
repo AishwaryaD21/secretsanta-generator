@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+    stages {
+        stage('Print Tag') {
+            steps {
+                script {
+                    echo "Tag version: ${params.TAG_VERSION}"
+                }
+            }
+        }
+        // Add more stages as needed
+    }
+}
+
