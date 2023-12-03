@@ -4,7 +4,8 @@ pipeline {
         stage('Print Tag') {
             steps {
                 script {
-                    echo "Tag version: ${params.TAG_VERSION}"
+                    //echo "Tag version: ${params.TAG_VERSION}"
+echo "new tag is "
                 }
             }
         }
