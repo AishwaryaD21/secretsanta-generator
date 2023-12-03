@@ -1,0 +1,143 @@
+Script started on 2023-12-03 18:12:46+0000
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[?1034h[root@ip-172-31-32-118 secretsanta-generator]#                     def lastTag = sh(script: 'git tag --list --sort=-version:refname | grep -E "^[0-9]+\\.[0-9]+\\.[0-9]+$" | head -n 1', returnStdout: true).trim( )
+bash: syntax error near unexpected token `('
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# 
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                     if (lastTag) {
+bash: syntax error near unexpected token `{'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         def tagParts = lastTag.tokenize('.')
+bash: syntax error near unexpected token `('
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         def major = tagParts[0] as int
+bash: def: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         def minor = tagParts[1] as int
+bash: def: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         def patch = tagParts[2] as int
+bash: def: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# 
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         if (minor < 9) {
+bash: syntax error near unexpected token `{'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                             minor += 1
+bash: minor: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                             patch = 0
+bash: patch: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         } else {
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                             major += 1
+bash: major: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                             minor = 0
+bash: minor: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                             patch = 0
+bash: patch: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# 
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         def newTag = "${major}.${minor}.${patch}"
+bash: def: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         echo "Creating new tag: ${newTag}"
+Creating new tag: 
+                        withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# 
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         sh "git tag -am 'Tagging for release ${newTag}' ${newTag}"
+sh: git tag -am 'Tagging for release ' : No such file or directory
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+bash: syntax error near unexpected token `[usernamePassword'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                             sh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"
+sh: git push --tags https://root:@github.com/AishwaryaD21/secretsanta-generator.git: No such file or directory
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                           //  build job: 'job2', parameters: [string(name: 'TAG_VERSION', value: "${newTag}")]
+bash: syntax error near unexpected token `('
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                     } else {
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         def newTag = "1.0.0"
+bash: def: command not found
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         echo "Creating initial tag: ${newTag}"
+Creating initial tag: 
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# 
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         sh "git tag -am 'Tagging for release ${newTag}' ${newTag}"
+sh: git tag -am 'Tagging for release ' : No such file or directory
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+bash: syntax error near unexpected token `[usernamePassword'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                             sh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"
+sh: git push --tags https://root:@github.com/AishwaryaD21/secretsanta-generator.git: No such file or directory
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                         }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                     }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#                 }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#             }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#         }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]#     }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# }
+bash: syntax error near unexpected token `}'
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# clear [K
+[3J[H[2J]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# cat Jenkinsfile-t[Kt[KT
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    checkout([$class: 'GitSCM', branches: [[name: 'master']], userRemoteConfigs: [[url: "https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"]]])
+                }
+            }
+        }
+        stage('Tag Generation') {
+            steps {
+                script {
+                    def lastTag = sh(script: 'git tag --list --sort=-version:refname | grep -E "^[0-9]+\\.[0-9]+\\.[0-9]+$" | head -n 1', returnStdout: true).trim()
+
+                    if (lastTag) {
+                        def tagParts = lastTag.tokenize('.')
+                        def major = tagParts[0] as int
+                        def minor = tagParts[1] as int
+                        def patch = tagParts[2] as int
+
+                        if (minor < 9) {
+                            minor += 1
+                            patch = 0
+                        } else {
+                            major += 1
+                            minor = 0
+                            patch = 0
+                        }
+
+                        def newTag = "${major}.${minor}.${patch}"
+                        echo "Creating new tag: ${newTag}"
+
+                        sh "git tag -am 'Tagging for release ${newTag}' ${newTag}"
+                        withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                            sh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"
+                          //  build job: 'job2', parameters: [string(name: 'TAG_VERSION', value: "${newTag}")]
+                        }
+                    } else {
+                        def newTag = "1.0.0"
+                        echo "Creating initial tag: ${newTag}"
+
+                        sh "git tag -am 'Tagging for release ${newTag}' ${newTag}"
+                        withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                            sh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+]0;root@ip-172-31-32-118:~/project/secretsanta-generator[root@ip-172-31-32-118 secretsanta-generator]# vi Jenkinsfile-t[KT
+[?1049h[>4;2m[?1h=[?2004h[?1004h[1;58r[?12h[?12l[22;2t[22;1t[27m[23m[29m[m[H[2J[?25l[58;1H"Jenkinsfile-T" 53L, 2487B[2;1H▽[6n[2;1H  [3;1HPzz\[0%m[6n[3;1H           [1;1H[>c]10;?]11;?[1;1Hpipeline {
+    agent any[2;14H[K[3;1H    stages {[3;13H[K[4;9Hstage('Checkout') {[5;13Hsteps {[6;17HwithCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[7;21Hcheckout([$class: 'GitSCM', branches: [[name: 'master']], userRemoteConfigs: [[url: "https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"]]])[8;17H}[9;13H}[10;9H}[11;9Hstage('Tag Generation') {[12;13Hsteps {[13;17Hscript {[14;21Hdef lastTag = sh(script: 'git tag --list --sort=-version:refname | grep -E "^[0-9]+\\.[0-9]+\\.[0-9]+$" | head -n 1', returnStdout: true).trim()[16;21Hif (lastTag) {[17;25Hdef tagParts = lastTag.tokenize('.')[18;25Hdef major = tagParts[0] as int[19;25Hdef minor = tagParts[1] as int[20;25Hdef patch = tagParts[2] as int[22;25Hif (minor < 9) {[23;29Hminor += 1[24;29Hpatch = 0[25;25H} else {[26;29Hmajor += 1[27;29Hminor = 0[28;29Hpatch = 0[29;25H}[31;25Hdef newTag = "${major}.${minor}.${patch}"[32;25Hecho "Creating new tag: ${newTag}"[34;25Hsh "git tag -am 'Tagging for release ${newTag}' ${newTag}"[35;25HwithCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[36;29Hsh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"[37;27H//  build job: 'job2', parameters: [string(name: 'TAG_VERSION', value: "${newTag}")][38;25H}[39;21H} else {[40;25Hdef newTag = "1.0.0"[41;25Hecho "Creating initial tag: ${newTag}"[43;25Hsh "git tag -am 'Tagging for release ${newTag}' ${newTag}"[44;25HwithCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[45;29Hsh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"[46;25H}[47;21H}[48;17H}[49;13H}[50;9H}
+    }
+}
+
+[1m[34m~                                                                                                                                                                                                                 [55;1H~                                                                                                                                                                                                                 [56;1H~                                                                                                                                                                                                                 [57;1H~                                                                                                                                                                                                                 [m[58;193H37,28[9CAll[37;28H[?25h[?4m[?12$p[27m[23m[29m[m[H[2J[?25l[1;1Hpipeline {
+    agent any
+    stages {[4;9Hstage('Checkout') {[5;13Hsteps {[6;17HwithCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[7;21Hcheckout([$class: 'GitSCM', branches: [[name: 'master']], userRemoteConfigs: [[url: "https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"]]])[8;17H}[9;13H}[10;9H}[11;9Hstage('Tag Generation') {[12;13Hsteps {[13;17Hscript {[14;21Hdef lastTag = sh(script: 'git tag --list --sort=-version:refname | grep -E "^[0-9]+\\.[0-9]+\\.[0-9]+$" | head -n 1', returnStdout: true).trim()[16;21Hif (lastTag) {[17;25Hdef tagParts = lastTag.tokenize('.')[18;25Hdef major = tagParts[0] as int[19;25Hdef minor = tagParts[1] as int[20;25Hdef patch = tagParts[2] as int[22;25Hif (minor < 9) {[23;29Hminor += 1[24;29Hpatch = 0[25;25H} else {[26;29Hmajor += 1[27;29Hminor = 0[28;29Hpatch = 0[29;25H}[31;25Hdef newTag = "${major}.${minor}.${patch}"[32;25Hecho "Creating new tag: ${newTag}"[34;25Hsh "git tag -am 'Tagging for release ${newTag}' ${newTag}"[35;25HwithCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[36;29Hsh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"[37;27H//  build job: 'job2', parameters: [string(name: 'TAG_VERSION', value: "${newTag}")][38;25H}[39;21H} else {[40;25Hdef newTag = "1.0.0"[41;25Hecho "Creating initial tag: ${newTag}"[43;25Hsh "git tag -am 'Tagging for release ${newTag}' ${newTag}"[44;25HwithCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[45;29Hsh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"[46;25H}[47;21H}[48;17H}[49;13H}[50;9H}
+    }
+}
+
+[1m[34m~                                                                                                                                                                                                                 [55;1H~                                                                                                                                                                                                                 [56;1H~                                                                                                                                                                                                                 [57;1H~                                                                                                                                                                                                                 [m[58;193H37,28[9CAll"Jenkinsfile-T" 53L, 2487B[37;28H[?25h[?25l[58;183Hi[37;28H[58;183H [37;28H[58;1H[1m-- INSERT --[m[58;13H[K[58;193H37,28[9CAll[37;28H[?25h[?25l[58;194H6[36;28H[?25h[?25l[58;194H5[35;28H[?25h[?25l[58;194H4[34;28H[?25h[?25l[58;194H3,1 [33;1H[?25h[?25l[58;194H2,28[32;28H[?25h[?25l[58;194H1[31;28H[?25h[?25l[58;194H0,1 [30;1H[?25h[?25l[25;32H[46m{[29;25H}[m[58;193H29,26[29;26H[?25h[?25l[25;32H{[29;25H}[58;194H8,28[28;28H[?25h[?25l[58;194H7[27;28H[?25h[?25l[58;194H6[26;28H[?25h[?25l[58;194H5[25;28H[?25h[?25l[58;194H4[24;28H[?25h[?25l[58;194H3[23;28H[?25h[?25l[22;28H[46m([9C)[m[58;194H2[22;28H[?25h[?25l([9C)[58;194H1,1 [21;1H[?25h[?25l[58;194H0,28[20;28H[?25h[?25l[58;193H19[19;28H[?25h[?25l[58;194H8[18;28H[?25h[?25l[58;194H7[17;28H[?25h[?25l[58;194H6[16;28H[?25h[?25l[58;194H5,1 [15;1H[?25h[?25l[58;194H4,28[14;28H[?25h[?25l[13;24H[46m{[48;17H}[m[58;194H3,25[13;25H[?25h[?25l[12;19H[46m{[m[13;24H{[48;17H}[49;13H[46m}[m[58;194H2,20[12;20H[?25h[?25l{[49;13H}[58;194H1,28[11;28H[?25h[?25l[4;27H[46m{[10;9H}[m[58;194H0,10[10;10H[?25h[?25l[4;27H{[5;19H[46m{[9;13H}[m[10;9H}[58;193H9,14 [9;14H[?25h[?25l[5;19H{[6;140H[46m{[8;17H}[m[9;13H}[58;193H8,18[8;18H[?25h[?25l[58;196H7[8;17H[?25h[?25l[6;140H{[8;17H}[58;193H7[7;17H[?25h[?25l[58;196H6[7;16H[?25h[?25l[58;196H5[7;15H[?25h[?25l[58;196H4[7;14H[?25h[?25l[58;196H3[7;13H[?25h[?25l[58;196H2[7;12H[?25h[?25l[58;196H1[7;11H[?25h[?25l[58;193H6[6;11H[?25h[?25l[58;196H0[6;10H[?25h[?25l[58;195H9 [6;9H[?25h[?25l[58;195H8[6;8H[?25h[?25l[58;193H5[5;8H[?25h[?25l[58;193H4[4;8H[?25h[?25l[58;193H3[3;8H[?25h[?25l[58;195H7[3;7H[?25h[?25l[58;195H6[3;6H[?25h[?25l[58;195H5[3;5H[?25h[?25l/stages {[58;195H6[3;6H[?25h[?25l/stages {[58;195H7[3;7H[?25h[?25l[58;193H4[4;7H[?25h[?25l/  stage('Checkout') {[58;195H8[4;8H[?25h[?25l/  stage('Checkout') {[58;195H9[4;9H[?25h[?25l[58;193H5[5;9H[?25h[?25l/    steps {[58;195H10[5;10H[?25h[?25l/    steps {[58;196H1[5;11H[?25h[?25l[58;193H6[6;11H[?25h[?25l/      withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[58;196H2[6;12H[?25h[?25l/      withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {[58;196H3[6;13H[?25h[?25l[58;193H7[7;13H[?25h[?25l/[7C checkout([$class: 'GitSCM', branches: [[name: 'master']], userRemoteConfigs: [[url: "https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"]]])[58;196H4[7;14H[?25h[?25l/[7C checkout([$class: 'GitSCM', branches: [[name: 'master']], userRemoteConfigs: [[url: "https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"]]])[58;196H5[7;15H[?25h[?25l[58;193H8[8;15H[?25h[?25l/  }[58;196H6[8;16H[?25h[?25l/  }[58;196H7[8;17H[?25h[?25l[5;21H[46m{[9;13H}[m[58;193H9,14[9;14H[?25h[?25l[58;196H3[9;13H[?25h[?25l[4;29H[46m{[m[5;21H{[9;13H}[10;9H[46m}[m[58;193H10,10[10;10H[?25h[?25l[4;29H{[10;9H}/[58;197H1[10;11H[?25h[?25l/[58;197H2[10;12H[?25h[?25l[10;11H[K[58;197H1[10;11H[?25h[?25l[4;29H[46m{[10;9H}[m[10;10H[K[58;197H0[10;10H[?25h[?25l[58;196H9 [10;9H[?25h[?25l/[46m}[m[58;196H10[10;10H[?25h[?25l/[46m}[m[58;197H1[10;11H[?25h[?25l[4;29H{[10;11H}[58;193H9,11 [9;11H[?25h[?25l/  }[58;196H2[9;12H[?25h[?25l/  }[58;196H3[9;13H[?25h[?25l[4;29H[46m{[10;11H}[m[58;193H10,12[10;12H[?25h[?25l[4;29H{[10;11H}[58;194H1,13[11;13H[?25h[?25l[4;29H[46m{[10;11H}[m[58;194H0,
