@@ -1,15 +1,58 @@
 pipeline {
-    agent any
-    stages {
-        stage('Print Tag') {
-            steps {
-                script {
-                    //echo "Tag version: ${params.TAG_VERSION}"
-echo "new tag is "
-                }
-            }
-        }
-        // Add more stages as needed
-    }
-}
+  agent any
 
+  parameters {
+    string(name: 'IMAGE_NAME', defaultValue: '', description: 'Name of Docker image')
+    string(name: 'TAG_NAME', defaultValue: '', description: 'Tag name for Docker image')
+  }
+
+  environment {
+    DOCKER_CREDENTIALS = 'docker-cred' // Replace with actual credentials ID
+  }
+
+  stages {
+    stage('Fetch Latest Tag & Build Docker Image') {
+      when {
+        expression { return params.TAG_NAME.isEmpty() }
+      }
+      steps {
+        def latestTag = sh(script: 'git describe --tags --abbrev=0', returnStdout: true).trim()
+        if (latestTag) {
+          environment {
+            DOCKER_IMAGE = "${params.IMAGE_NAME}:${latestTag}"
+            TAG_NAME = latestTag
+          }
+          
+          sh "docker build -t ${DOCKER_IMAGE} ."
+          sh "docker push ${DOCKER_IMAGE}"
+        } else {
+          echo "No tags found on the master branch, skipping the build."
+        }
+      }
+    }
+
+    stage('Build Docker Image') {
+      when {
+        expression { return !params.TAG_NAME.isEmpty() }
+      }
+      steps {
+        environment {
+          DOCKER_IMAGE = "${params.IMAGE_NAME}:${params.TAG_NAME}"
+          TAG_NAME = params.TAG_NAME
+        }
+        
+        sh "docker build -t ${DOCKER_IMAGE} ."
+        sh "docker push ${DOCKER_IMAGE}"
+      }
+    }
+  }
+
+  post {
+    success {
+      // Send notification or trigger other pipelines
+    }
+    failure {
+      // Send error notification
+    }
+  }
+}
