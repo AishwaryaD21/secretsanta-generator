@@ -6,6 +6,15 @@ pipeline {
     }
 
     stages {
+        stage('Checkout Repository') {
+            steps {
+                script {
+                    // Checkout the Git repository
+                    git branch: 'master', credentialsId: 'GitToken', url: 'https://github.com/AishwaryaD21/secretsanta-generator.git'
+                }
+            }
+        }
+
         stage('Determine Trigger Type') {
             steps {
                 script {
