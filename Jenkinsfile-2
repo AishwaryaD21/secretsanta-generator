@@ -1,58 +1,67 @@
 pipeline {
-  agent any
+    agent any
 
-  parameters {
-    string(name: 'IMAGE_NAME', defaultValue: '', description: 'Name of Docker image')
-    string(name: 'TAG_NAME', defaultValue: '', description: 'Tag name for Docker image')
-  }
+    parameters {
+        string(name: 'GIT_TAG', description: 'Specify the Git tag when triggering from another job', defaultValue: '')
+    }
 
-  environment {
-    DOCKER_CREDENTIALS = 'docker-cred' // Replace with actual credentials ID
-  }
-
-  stages {
-    stage('Fetch Latest Tag & Build Docker Image') {
-      when {
-        expression { return params.TAG_NAME.isEmpty() }
-      }
-      steps {
-        def latestTag = sh(script: 'git describe --tags --abbrev=0', returnStdout: true).trim()
-        if (latestTag) {
-          environment {
-            DOCKER_IMAGE = "${params.IMAGE_NAME}:${latestTag}"
-            TAG_NAME = latestTag
-          }
-          
-          sh "docker build -t ${DOCKER_IMAGE} ."
-          sh "docker push ${DOCKER_IMAGE}"
-        } else {
-          echo "No tags found on the master branch, skipping the build."
+    stages {
+        stage('Checkout Repository') {
+            steps {
+                script {
+                    // Checkout the Git repository
+                    git branch: 'master', credentialsId: 'GitToken', url: 'https://github.com/AishwaryaD21/secretsanta-generator.git'
+                }
+            }
         }
-      }
-    }
 
-    stage('Build Docker Image') {
-      when {
-        expression { return !params.TAG_NAME.isEmpty() }
-      }
-      steps {
-        environment {
-          DOCKER_IMAGE = "${params.IMAGE_NAME}:${params.TAG_NAME}"
-          TAG_NAME = params.TAG_NAME
+        stage('Determine Trigger Type') {
+            steps {
+                script {
+                    if (env.CHANGE_ID) {
+                        echo "Build triggered by Git change (automated)"
+                    } else {
+                        echo "Build triggered manually"
+                    }
+                }
+            }
         }
-        
-        sh "docker build -t ${DOCKER_IMAGE} ."
-        sh "docker push ${DOCKER_IMAGE}"
-      }
-    }
-  }
 
-  post {
-    success {
-      // Send notification or trigger other pipelines
+        stage('Fetch Latest Tag') {
+            when {
+                expression { env.CHANGE_ID == null && params.GIT_TAG == '' }
+            }
+            steps {
+                script {
+                    // Log the list of tags to see what is available
+                    sh 'git tag -l'
+
+                    // Logic to fetch the latest tag from the Git repository
+                    def latestTag = sh(script: 'git tag -l | sort -V | tail -n 1', returnStdout: true).trim()
+                    echo "Latest Git Tag: ${latestTag}"
+                    // Your further steps using the latest tag
+                }
+            }
+        }
+
+        stage('Use Parameterized Tag') {
+            when {
+                expression { env.CHANGE_ID == null && params.GIT_TAG != '' }
+            }
+            steps {
+                script {
+                    // Use the parameterized tag passed from another job
+                    def selectedTag = params.GIT_TAG
+                    echo "Using Parameterized Git Tag: ${selectedTag}"
+                    
+                    // Log the commit details for the selected tag
+                    sh "git show ${selectedTag}"
+                    
+                    // Your further steps using the parameterized tag
+                }
+            }
+        }
+
+        // Add more stages as needed
     }
-    failure {
-      // Send error notification
-    }
-  }
 }
