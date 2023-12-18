@@ -36,7 +36,7 @@ pipeline {
                         sh "git tag -am 'Tagging for release ${newTag}' ${newTag}"
                         withCredentials([usernamePassword(credentialsId: 'GitToken', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                             sh "git push --tags https://${USERNAME}:${PASSWORD}@github.com/AishwaryaD21/secretsanta-generator.git"
-                           build job: 'job-1', parameters: [string(name: 'TAG_VERSION', value: "${newTag}")]
+                           build job: 'job-1', parameters: [string(name: 'GIT_TAG', value: "${newTag}")]
                         }
                     } else {
                         def newTag = "1.0.0"
