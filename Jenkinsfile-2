@@ -6,15 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Repository') {
-            steps {
-                script {
-                    // Checkout the Git repository
-                    git branch: 'master', credentialsId: 'GitToken', url: 'https://github.com/AishwaryaD21/secretsanta-generator.git'
-                }
-            }
-        }
-
         stage('Determine Trigger Type') {
             steps {
                 script {
@@ -33,6 +24,9 @@ pipeline {
             }
             steps {
                 script {
+                    // Checkout the Git repository to get the latest tag
+                    git branch: 'master', credentialsId: 'GitToken', url: 'https://github.com/AishwaryaD21/secretsanta-generator.git'
+
                     // Log the list of tags to see what is available
                     sh 'git tag -l'
 
@@ -50,12 +44,15 @@ pipeline {
             }
             steps {
                 script {
+                    // Checkout the Git repository to use the parameterized tag
+                    git branch: 'master', credentialsId: 'GitToken', url: 'https://github.com/AishwaryaD21/secretsanta-generator.git'
+
                     // Use the parameterized tag passed from another job
                     def selectedTag = params.GIT_TAG
                     echo "Using Parameterized Git Tag: ${selectedTag}"
                     
                     // Log the commit details for the selected tag
-                    sh "git show ${selectedTag}"
+                   sh "git show ${selectedTag}"
                     
                     // Your further steps using the parameterized tag
                 }
